@@ -1,0 +1,33 @@
+name: Build Mindustry JAR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Mindustry
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Fetch Arc dependency
+        run: git clone --depth=1 --branch=master https://github.com/Anuken/Arc ../Arc
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build desktop jar
+        run: ./gradlew desktop:dist
+
+      - name: Upload Mindustry.jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mindustry-Desktop
+          path: desktop/build/libs/Mindustry.jar
